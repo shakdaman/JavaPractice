@@ -82,39 +82,41 @@ public class Main {
     }
 
     public static void splitAndCreateSheets(ArrayList arrayList) {
-        int splitSize = arrayList.size() / 3 ;
+        int splitSize = arrayList.size() / 3;
         int sheetNbr = 1;
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Split " + sheetNbr);
-        HSSFRow row = sheet.createRow(0);
-
-        row.createCell(0).setCellValue("CLAIM_NBR");
-        row.createCell(1).setCellValue("CLAIM_SFX");
-        row.createCell(2).setCellValue("CHECK_AMT");
-        row.createCell(3).setCellValue("CHECK_DATE");
 
         for (int i = 0; i < arrayList.size(); i += splitSize) {
             List<ExcelRecord> chunk = arrayList.subList(i, Math.min(i + splitSize, arrayList.size()));
             System.out.println("Sublist has: " + chunk.size() + " elements.");
 
-            for ( int j = 1; j < chunk.size() - 1; j ++ ) {
-                HSSFRow rows = sheet.createRow(j);
-                rows.createCell(0).setCellValue(chunk.get(j).getClaimNbr());
-                rows.createCell(1).setCellValue(chunk.get(j).getClaimSfx());
-                rows.createCell(2).setCellValue(chunk.get(j).getCheckAmt());
-                rows.createCell(3).setCellValue(chunk.get(j).getCheckDate());
-            }
+                HSSFWorkbook workbook = new HSSFWorkbook();
+                HSSFSheet sheet = workbook.createSheet("Split_" + sheetNbr);
+                HSSFRow row = sheet.createRow(0);
 
+                row.createCell(0).setCellValue("CLAIM_NBR");
+                row.createCell(1).setCellValue("CLAIM_SFX");
+                row.createCell(2).setCellValue("CHECK_AMT");
+                row.createCell(3).setCellValue("CHECK_DATE");
+
+
+                for (int j = 1; j < chunk.size() - 1; j++) {
+                    HSSFRow rows = sheet.createRow(j);
+                    rows.createCell(0).setCellValue(chunk.get(j).getClaimNbr());
+                    rows.createCell(1).setCellValue(chunk.get(j).getClaimSfx());
+                    rows.createCell(2).setCellValue(chunk.get(j).getCheckAmt());
+                    rows.createCell(3).setCellValue(chunk.get(j).getCheckDate());
+                }
+                try {
+                    FileOutputStream fileOutputStream = new FileOutputStream(new File(filePath + sheetNbr + ".xls"));
+                    workbook.write(fileOutputStream);
+
+                } catch (Exception e) {
+                    System.out.println("Error in splitAndCreateSheets()");
+                }
             sheetNbr += 1;
-
         }
 
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(new File(filePath + sheetNbr + ".xls"));
-            workbook.write(fileOutputStream);
-
-        } catch (Exception e) {
-            System.out.println("Error in splitAndCreateSheets()");
-        }
     }
+
 }
+
